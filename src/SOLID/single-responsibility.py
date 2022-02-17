@@ -1,6 +1,9 @@
 # Each class should have one responsibility, one single purpose
 # Robert C. Martin: "A class should have only one reason to change".
-# anti-pattern: God object (sometimes also called an Omniscient or All-knowing object) is an object that references a large number of distinct types, has too many unrelated or uncategorized methods, or some combination of both (https://en.wikipedia.org/wiki/God_object)
+# anti-pattern: God object (sometimes also called an Omniscient or
+# All-knowing object) is an object that references a large number of
+# distinct types, has too many unrelated or uncategorized methods,
+# or some combination of both (https://en.wikipedia.org/wiki/God_object)
 from typing import Any
 
 
