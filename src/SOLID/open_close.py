@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from enum import Enum
-from typing import Any, Generator
+from mimetypes import init
+from typing import Any, Callable, Generator
 
 
 class Color(Enum):
@@ -10,9 +11,9 @@ class Color(Enum):
 
 
 class Size(Enum):
-    Small = 1
-    Medium = 2
-    Large = 3
+    SMALL = 1
+    MEDIUM = 2
+    LARGE = 3
 
 
 class Product:
@@ -20,6 +21,9 @@ class Product:
         self.name: str = name
         self.color: Color = color
         self.size: Size = size
+
+    def __str__(self) -> str:
+        return f"{self.size.name.lower()}, {self.color.name.lower()} {self.name}"
 
 
 # OCP = open for extension, closed for modification principle
@@ -90,6 +94,19 @@ class SizeSpecification(Specification):
         return product.size == self.size
 
 
+class AndSpecification(Specification):
+    def __init__(self, *args) -> None:
+        self.specifications: list[Specification] = [*args]
+
+    def is_satisfied(self, product: Product) -> bool:
+        return all(
+            map(
+                lambda specification: specification.is_satisfied(product),
+                self.specifications,
+            )
+        )
+
+
 class BetterFilter(Filter):
     def filter(
         self, products: list[Product], specification: Specification
@@ -97,3 +114,40 @@ class BetterFilter(Filter):
         for product in products:
             if specification.is_satisfied(product):
                 yield product
+
+
+def test() -> None:
+    green_apple = Product("apple", Color.GREEN, Size.SMALL)
+    red_apple = Product("apple", Color.RED, Size.SMALL)
+    tree = Product("tree", Color.GREEN, Size.LARGE)
+    house = Product("house", Color.BLUE, Size.MEDIUM)
+    red_car = Product("car", Color.RED, Size.MEDIUM)
+    blue_car = Product("car", Color.BLUE, Size.LARGE)
+    red_table = Product("table", Color.RED, Size.MEDIUM)
+
+    products = [green_apple, red_apple, tree, house, red_car, blue_car, red_table]
+
+    print("\nWRONG approach\n----------------")
+    product_filter = ProductFilter()
+    print("\nred products:")
+    for product in product_filter.filter_by_color(products, Color.RED):
+        print(product)
+    print("\nmedium products:")
+    for product in product_filter.filter_by_size(products, Size.MEDIUM):
+        print(product)
+
+    print("\nCORRECT approach\n----------------")
+    red_spec = ColorSpecification(Color.RED)
+    medium_spec = SizeSpecification(Size.MEDIUM)
+    better_filter = BetterFilter()
+    print("\nred products:")
+    for product in better_filter.filter(products, red_spec):
+        print(product)
+    print("\nmedium products:")
+    for product in better_filter.filter(products, medium_spec):
+        print(product)
+
+    print("\nAndSpec: red and medium products\n----------------")
+    and_specification = AndSpecification(red_spec, medium_spec)
+    for product in better_filter.filter(products, and_specification):
+        print(product)

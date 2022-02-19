@@ -67,6 +67,3 @@ def test() -> None:
 
     with open(filename) as file:
         print(file.read())
-
-
-test()
