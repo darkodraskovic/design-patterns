@@ -1,7 +1,7 @@
+# Standard library imports
 from abc import ABC, abstractmethod
+from collections.abc import Generator
 from enum import Enum
-from mimetypes import init
-from typing import Any, Callable, Generator
 
 
 class Color(Enum):
@@ -23,7 +23,8 @@ class Product:
         self.size: Size = size
 
     def __str__(self) -> str:
-        return f"{self.size.name.lower()}, {self.color.name.lower()} {self.name}"
+        return f"{self.size.name.lower()}, \
+            {self.color.name.lower()} {self.name}"
 
 
 # OCP = open for extension, closed for modification principle
@@ -95,15 +96,12 @@ class SizeSpecification(Specification):
 
 
 class AndSpecification(Specification):
-    def __init__(self, *args) -> None:
+    def __init__(self, *args: Specification) -> None:
         self.specifications: list[Specification] = [*args]
 
     def is_satisfied(self, product: Product) -> bool:
         return all(
-            map(
-                lambda specification: specification.is_satisfied(product),
-                self.specifications,
-            )
+            specification.is_satisfied(product) for specification in self.specifications
         )
 
 

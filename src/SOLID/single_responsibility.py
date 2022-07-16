@@ -4,6 +4,7 @@
 # All-knowing object) is an object that references a large number of
 # distinct types, has too many unrelated or uncategorized methods,
 # or some combination of both (https://en.wikipedia.org/wiki/God_object)
+# Standard library imports
 from typing import Any
 
 

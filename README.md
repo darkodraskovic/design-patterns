@@ -9,7 +9,7 @@ SOLID principles and design patterns examples in Python.
 ```ps1
 python.exe -m venv .venv
 .\.venv\Scripts\Activate.ps1
-pip3 install black mypy
+pip3 install black mypy flake8 pylint
 ```
 
 ### Commit
@@ -17,5 +17,6 @@ pip3 install black mypy
 Run before any commit:
 
 ```ps1
+pre-commit install
 pre-commit run --all-files
 ```
